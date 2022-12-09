@@ -46,7 +46,7 @@ public class ${name}Item extends Item {
 
 	@Override public InteractionResultHolder<ItemStack> use(Level world, Player entity, InteractionHand hand) {
 		entity.startUsingItem(hand);
-		return new InteractionResultHolder(InteractionResult.SUCCESS, entity.getItemInHand(hand));
+		return new InteractionResultHolder(<#if data.animation != "none">InteractionResult.SUCCESS<#else>InteractionResult.FAIL</#if>, entity.getItemInHand(hand));
 	}
 
 	<@onEntitySwing data.onEntitySwing/>
@@ -61,7 +61,11 @@ public class ${name}Item extends Item {
 	</#if>
 
 	@Override public UseAnim getUseAnimation(ItemStack itemstack) {
+	<#if data.animation != "swing">
 		return UseAnim.${data.animation?upper_case};
+	<#else>
+		return UseAnim.NONE;
+	</#if>
 	}
 
 	@Override public int getUseDuration(ItemStack itemstack) {
@@ -70,7 +74,7 @@ public class ${name}Item extends Item {
 
 	<#if data.hasGlow>
 	<@hasGlow data.glowCondition/>
-    </#if>
+	</#if>
 
 	<#if data.enableMeleeDamage>
 		@Override public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
@@ -98,7 +102,7 @@ public class ${name}Item extends Item {
 				}
 			}
 		}
-    <#else>
+	<#else>
 		@Override
 		public void releaseUsing(ItemStack itemstack, Level world, LivingEntity entityLiving, int timeLeft) {
 			if (!world.isClientSide() && entityLiving instanceof ServerPlayer entity) {
@@ -110,7 +114,7 @@ public class ${name}Item extends Item {
 				}
 			}
 		}
-    </#if>
+	</#if>
 
 }
 
@@ -143,17 +147,22 @@ public class ${name}Item extends Item {
 			if (stack.hurt(1, world.getRandom(), entity)) {
 				stack.shrink(1);
 				stack.setDamageValue(0);
-            	if (stack.isEmpty())
-               		entity.getInventory().removeItem(stack);
+				if (stack.isEmpty())
+					entity.getInventory().removeItem(stack);
 			}
 		} else{
 			stack.shrink(1);
-            if (stack.isEmpty())
-               entity.getInventory().removeItem(stack);
+			if (stack.isEmpty())
+			   entity.getInventory().removeItem(stack);
 		}
 	}
 	<#else>
+	if (entity.getAbilities().instabuild)
+	entityarrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
+	<#if !data.pickupProjectiles>
+	else
 	entityarrow.pickup = AbstractArrow.Pickup.DISALLOWED;
+	</#if>
 	</#if>
 
 	<#if hasProcedure(data.onRangedItemUsed)>

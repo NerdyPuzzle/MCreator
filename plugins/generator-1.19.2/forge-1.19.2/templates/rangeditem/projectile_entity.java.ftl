@@ -123,6 +123,7 @@ public class ${name}Entity extends AbstractArrow implements ItemSupplier {
 	}
 	</#if>
 
+	<#if hasProcedure(data.onBulletFlyingTick) || !data.preserveProjectiles>
 	@Override public void tick() {
 		super.tick();
 
@@ -137,9 +138,12 @@ public class ${name}Entity extends AbstractArrow implements ItemSupplier {
 			}/>
 		</#if>
 
+		<#if !data.preserveProjectiles>
 		if (this.inGround)
 			this.discard();
+		</#if>
 	}
+	</#if>
 
 	public static ${name}Entity shoot(Level world, LivingEntity entity, RandomSource random, float power, double damage, int knockback) {
 		${name}Entity entityarrow = new ${name}Entity(${JavaModName}Entities.${data.getModElement().getRegistryNameUpper()}.get(), entity, world);
@@ -179,6 +183,15 @@ public class ${name}Entity extends AbstractArrow implements ItemSupplier {
 
 		return entityarrow;
 	}
+
+	<#if data.ammoItem.isEmpty() && data.preserveProjectiles && data.pickupProjectiles>
+	@Override
+	protected boolean tryPickup(Player entity) {
+		if (this.pickup == (AbstractArrow.Pickup.ALLOWED))
+			return true;
+		return super.tryPickup(entity);
+	}
+	</#if>
 
 }
 </#compress>

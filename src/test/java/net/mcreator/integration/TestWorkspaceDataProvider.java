@@ -1043,7 +1043,7 @@ public class TestWorkspaceDataProvider {
 			item.isMeat = _true;
 			item.isAlwaysEdible = _true;
 			item.animation = getRandomItem(random,
-					new String[] { "block", "bow", "crossbow", "drink", "eat", "none", "spear" });
+					new String[] { "block", "bow", "crossbow", "drink", "eat", "none", "spear", "spyglass" });
 			item.eatResultItem = new MItemBlock(modElement.getWorkspace(), emptyLists ?
 					"" :
 					getRandomMCItem(random, ElementUtil.loadBlocksAndItems(modElement.getWorkspace())).getName());
@@ -1077,7 +1077,7 @@ public class TestWorkspaceDataProvider {
 				rangedItem.specialInfo = new ArrayList<>();
 			}
 			rangedItem.animation = getRandomItem(random,
-					new String[] { "block", "bow", "crossbow", "drink", "eat", "none", "spear" });
+					new String[] { "block", "swing", "bow", "crossbow", "drink", "eat", "none", "spear", "spyglass" });
 			rangedItem.shootConstantly = _true;
 			rangedItem.usageCount = 67;
 			rangedItem.stackSize = 41;
@@ -1088,6 +1088,8 @@ public class TestWorkspaceDataProvider {
 			rangedItem.bulletKnockback = 5;
 			rangedItem.bulletParticles = _true;
 			rangedItem.bulletIgnitesFire = _true;
+			rangedItem.preserveProjectiles = _true;
+			rangedItem.pickupProjectiles = _true;
 			rangedItem.bulletItemTexture = new MItemBlock(modElement.getWorkspace(),
 					getRandomMCItem(random, blocksAndItems).getName());
 			rangedItem.onBulletHitsBlock = new Procedure("procedure2");
