@@ -20,6 +20,8 @@
 package net.mcreator.element.parts.procedure;
 
 import com.google.gson.JsonDeserializer;
+import net.mcreator.element.parts.NumberProcedure;
+import net.mcreator.element.parts.Procedure;
 
 import java.util.HashMap;
 import java.util.Map;

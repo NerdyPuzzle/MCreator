@@ -20,7 +20,7 @@
 package net.mcreator.ui.procedure;
 
 import net.mcreator.blockly.data.Dependency;
-import net.mcreator.element.parts.procedure.Procedure;
+import net.mcreator.element.parts.Procedure;
 import net.mcreator.element.parts.procedure.StringProcedure;
 import net.mcreator.ui.MCreator;
 import net.mcreator.ui.help.IHelpContext;

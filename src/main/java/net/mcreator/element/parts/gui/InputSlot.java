@@ -20,7 +20,7 @@ package net.mcreator.element.parts.gui;
 
 import net.mcreator.element.parts.MItemBlock;
 import net.mcreator.element.parts.procedure.LogicProcedure;
-import net.mcreator.element.parts.procedure.Procedure;
+import net.mcreator.element.parts.Procedure;
 
 import java.awt.*;
 

@@ -20,8 +20,8 @@
 package net.mcreator.ui.procedure;
 
 import net.mcreator.blockly.data.Dependency;
-import net.mcreator.element.parts.procedure.NumberProcedure;
-import net.mcreator.element.parts.procedure.Procedure;
+import net.mcreator.element.parts.NumberProcedure;
+import net.mcreator.element.parts.Procedure;
 import net.mcreator.ui.MCreator;
 import net.mcreator.ui.help.IHelpContext;
 import net.mcreator.ui.init.L10N;

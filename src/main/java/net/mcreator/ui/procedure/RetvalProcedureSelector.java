@@ -21,7 +21,7 @@ package net.mcreator.ui.procedure;
 
 import net.mcreator.blockly.data.Dependency;
 import net.mcreator.element.ModElementType;
-import net.mcreator.element.parts.procedure.Procedure;
+import net.mcreator.element.parts.Procedure;
 import net.mcreator.element.parts.procedure.RetvalProcedure;
 import net.mcreator.generator.GeneratorConfiguration;
 import net.mcreator.generator.GeneratorStats;

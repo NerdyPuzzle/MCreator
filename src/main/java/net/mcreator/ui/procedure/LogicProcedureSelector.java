@@ -21,7 +21,7 @@ package net.mcreator.ui.procedure;
 
 import net.mcreator.blockly.data.Dependency;
 import net.mcreator.element.parts.procedure.LogicProcedure;
-import net.mcreator.element.parts.procedure.Procedure;
+import net.mcreator.element.parts.Procedure;
 import net.mcreator.ui.MCreator;
 import net.mcreator.ui.help.IHelpContext;
 import net.mcreator.ui.init.L10N;
@@ -29,7 +29,6 @@ import net.mcreator.workspace.elements.VariableTypeLoader;
 
 import javax.annotation.Nullable;
 import javax.swing.*;
-import java.awt.*;
 
 public class LogicProcedureSelector extends RetvalProcedureSelector<Boolean, LogicProcedure> {
 
