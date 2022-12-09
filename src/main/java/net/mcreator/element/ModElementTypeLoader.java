@@ -111,6 +111,8 @@ public class ModElementTypeLoader {
 				new ModElementType<>("tag", 'j', BaseType.DATAPACK, RecipeType.NONE, TagGUI::new, Tag.class));
 		ModElementType.TOOL = register(
 				new ModElementType<>("tool", 't', BaseType.ITEM, RecipeType.ITEM, ToolGUI::new, Tool.class));
+		ModElementType.VILLAGERPROFESSION = register(
+				new ModElementType<>("villagerprofession", null, BaseType.OTHER, RecipeType.NONE, VillagerProfessionGUI::new, VillagerProfession.class));
 		ModElementType.VILLAGERTRADE = register(
 				new ModElementType<>("villagertrade", null, BaseType.OTHER, RecipeType.NONE, VillagerTradeGUI::new,
 						VillagerTrade.class));

@@ -1506,6 +1506,18 @@ public class TestWorkspaceDataProvider {
 					VariableTypeLoader.BuiltInTypes.NUMBER.getName() :
 					VariableTypeLoader.BuiltInTypes.LOGIC.getName());
 			return gamerule;
+		} else if (ModElementType.VILLAGERPROFESSION.equals(modElement.getType())) {
+			VillagerProfession profession = new VillagerProfession(modElement);
+			profession.displayName = modElement.getName();
+			MItemBlock poi = new MItemBlock(modElement.getWorkspace(),
+					getRandomMCItem(random, blocks).getName());
+			profession.pointOfInterest = poi;
+			profession.actionSound = new Sound(modElement.getWorkspace(),
+					getRandomItem(random, ElementUtil.getAllSounds(modElement.getWorkspace())));
+			profession.hat = getRandomString(random, Arrays.asList("None", "Partial", "Full"));
+			profession.professionTextureFile = "test.png";
+			profession.zombifiedProfessionTextureFile = "test.png";
+			return profession;
 		} else if (ModElementType.VILLAGERTRADE.equals(modElement.getType())) {
 			VillagerTrade villagerTrade = new VillagerTrade(modElement);
 			villagerTrade.tradeEntries = new ArrayList<>();
@@ -1513,8 +1525,9 @@ public class TestWorkspaceDataProvider {
 				int tradeEntries = random.nextInt(10) + 1;
 				for (int i = 0; i < tradeEntries; i++) {
 					VillagerTrade.CustomTradeEntry trade = new VillagerTrade.CustomTradeEntry();
-					trade.villagerProfession = new VillagerProfession(modElement.getWorkspace(),
-							getRandomDataListEntry(random, ElementUtil.loadAllVillagerProfessions()));
+					trade.villagerProfession = new ProfessionEntry(modElement.getWorkspace(),
+							getRandomDataListEntry(random,
+									ElementUtil.loadAllVillagerProfessions(modElement.getWorkspace())));
 					trade.entries = new ArrayList<>();
 
 					int entries = random.nextInt(10) + 1;
@@ -1539,8 +1552,7 @@ public class TestWorkspaceDataProvider {
 						trade.entries.add(entry);
 					}
 					VillagerTrade.CustomTradeEntry wanderingTrade = new VillagerTrade.CustomTradeEntry();
-					wanderingTrade.villagerProfession = new VillagerProfession(modElement.getWorkspace(),
-							"WANDERING_TRADER");
+					wanderingTrade.villagerProfession = new ProfessionEntry(modElement.getWorkspace(), "WANDERING_TRADER");
 					wanderingTrade.entries = new ArrayList<>();
 
 					int wanderingEntries = random.nextInt(10) + 1;
