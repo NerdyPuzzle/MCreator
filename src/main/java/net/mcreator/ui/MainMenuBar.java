@@ -110,6 +110,8 @@ public class MainMenuBar extends JMenuBar {
 		code.addSeparator();
 		code.add(mcreator.actionRegistry.reformatCodeAndImports);
 		code.add(mcreator.actionRegistry.reformatCodeOnly);
+		code.addSeparator();
+		code.add(mcreator.actionRegistry.chatgpt);
 		add(code);
 
 		imageEditor.setMnemonic('I');

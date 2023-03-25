@@ -32,6 +32,8 @@ import net.mcreator.ui.action.impl.workspace.resources.ModelImportActions;
 import net.mcreator.ui.action.impl.workspace.resources.StructureImportActions;
 import net.mcreator.ui.action.impl.workspace.resources.TextureAction;
 import net.mcreator.ui.browser.action.*;
+import net.mcreator.ui.component.util.PanelUtils;
+import net.mcreator.ui.dialogs.MCreatorDialog;
 import net.mcreator.ui.dialogs.TextureImportDialogs;
 import net.mcreator.ui.dialogs.imageeditor.NewImageDialog;
 import net.mcreator.ui.dialogs.preferences.PreferencesDialog;
@@ -39,6 +41,7 @@ import net.mcreator.ui.dialogs.tools.*;
 import net.mcreator.ui.ide.action.*;
 import net.mcreator.ui.init.L10N;
 import net.mcreator.ui.init.UIRES;
+import net.mcreator.ui.validation.component.VTextField;
 import net.mcreator.ui.views.AnimationMakerView;
 import net.mcreator.ui.views.ArmorImageMakerView;
 import net.mcreator.ui.views.editor.image.action.ImageEditorRedoAction;
@@ -50,6 +53,7 @@ import net.mcreator.ui.workspace.resources.TextureType;
 import net.mcreator.util.DesktopUtils;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -192,6 +196,8 @@ public class ActionRegistry {
 	public final BasicAction imageEditorResizeLayer;
 	public final BasicAction imageEditorResizeCanvas;
 
+	public final BasicAction chatgpt;
+
 	public ActionRegistry(MCreator mcreator) {
 		this.mcreator = mcreator;
 
@@ -232,6 +238,20 @@ public class ActionRegistry {
 		this.newPackage = new NewPackageAction(this);
 		this.newFolder = new NewFolderAction(this);
 		this.showFindBar = new ShowFindAction(this);
+
+
+
+
+		gpt g = new gpt(mcreator);
+
+		this.chatgpt = g.getAction();
+
+
+
+
+
+
+
 		this.showReplaceBar = new ShowReplaceAction(this);
 		this.reformatCodeAndImports = new ReformatCodeAndImportsAction(this).setIcon(UIRES.get("16px.reformatcode"));
 		this.reformatCodeOnly = new ReformatCodeAction(this);
@@ -365,6 +385,59 @@ public class ActionRegistry {
 
 	public MCreator getMCreator() {
 		return mcreator;
+	}
+
+
+	public class gpt {
+	public gpt(MCreator mcreator) {}
+	public void open(MCreator mcreator) {
+		MCreatorDialog dialog = new MCreatorDialog(mcreator, L10N.t("ChatGPT prompt code generator", new Object[0]), true);
+		dialog.setLayout(new BorderLayout());
+		dialog.setModal(true);
+
+		JPanel main = new JPanel(new BorderLayout(15, 15));
+		main.setLayout(new BoxLayout(main, BoxLayout.PAGE_AXIS));
+
+		JPanel sub = new JPanel(new GridLayout(2, 1, 15, 15));
+
+		sub.setLayout(new BoxLayout(sub, BoxLayout.PAGE_AXIS));
+
+		ImageIcon icm = UIRES.get("16px.chatgpt-icon");
+		JLabel icn = new JLabel();
+		icn.setIcon(icm);
+		sub.add(PanelUtils.totalCenterInPanel(icn));
+		VTextField fld = new VTextField(26);
+		sub.add(PanelUtils.centerInPanel(fld));
+		main.add("Center", sub);
+
+		dialog.setTitle("ChatGPT prompt code generator");
+		JButton ok = L10N.button("Generate prompt", new Object[0]);
+		JButton cancel = new JButton(UIManager.getString("OptionPane.cancelButtonText"));
+		cancel.addActionListener((e) -> {
+			dialog.setVisible(false);
+		});
+		dialog.getRootPane().setDefaultButton(ok);
+		ok.addActionListener((e) -> {
+			dialog.setVisible(false);
+		});
+
+		main.add("South", PanelUtils.join(ok, cancel));
+		dialog.add("Center", main);
+		dialog.setSize(400, 180);
+		dialog.setLocationRelativeTo(mcreator);
+		dialog.setVisible(true);
+
+	}
+
+	public BasicAction getAction() {
+		return (new BasicAction(ActionRegistry.this, L10N.t("ChatGPT prompt code generator", new Object[0]), (e) -> {
+			open(ActionRegistry.this.getMCreator());
+		}) {
+			public boolean isEnabled() {
+				return true;
+			}
+		}).setIcon(UIRES.get("16px.gpt"));
+	}
 	}
 
 }
