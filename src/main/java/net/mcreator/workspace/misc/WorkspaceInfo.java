@@ -251,6 +251,16 @@ import java.util.*;
 		return false;
 	}
 
+	public boolean hasShields() {
+		for (ModElement element : workspace.getModElements()) {
+			if (element.getType() == ModElementType.TOOL) {
+				if (element.getGeneratableElement() instanceof Tool tool)
+					if (tool.toolType.equals("Shield"))
+						return true;
+			}
+		}
+	}
+	
 	public boolean hasBiomesInVanillaDimensions() {
 		for (ModElement element : workspace.getModElements()) {
 			if (element.getType() == ModElementType.BIOME) {
