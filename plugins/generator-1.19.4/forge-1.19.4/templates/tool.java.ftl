@@ -1,7 +1,7 @@
 <#--
  # MCreator (https://mcreator.net/)
  # Copyright (C) 2012-2020, Pylo
- # Copyright (C) 2020-2021, Pylo, opensource contributors
+ # Copyright (C) 2020-2023, Pylo, opensource contributors
  # 
  # This program is free software: you can redistribute it and/or modify
  # it under the terms of the GNU General Public License as published by
@@ -37,6 +37,7 @@ package ${package}.item;
 
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
+<#compress>
 <#if data.toolType == "Pickaxe" || data.toolType == "Axe" || data.toolType == "Sword" || data.toolType == "Spade"
 		|| data.toolType == "Hoe" || data.toolType == "Shears" || data.toolType == "Shield" || data.toolType == "MultiTool">
 public class ${name}Item extends ${data.toolType?replace("Spade", "Shovel")?replace("MultiTool", "Tiered")}Item {
@@ -48,32 +49,24 @@ public class ${name}Item extends ${data.toolType?replace("Spade", "Shovel")?repl
 					return ${data.usageCount};
 				}
 
-   				public float getSpeed() {
+				public float getSpeed() {
 					return ${data.efficiency}f;
 				}
 
-   				public float getAttackDamageBonus() {
+				public float getAttackDamageBonus() {
 					return ${data.damageVsEntity - 2}f;
 				}
 
-   				public int getLevel() {
+				public int getLevel() {
 					return ${data.harvestLevel};
 				}
 
-   				public int getEnchantmentValue() {
+				public int getEnchantmentValue() {
 					return ${data.enchantability};
 				}
 
-   				public Ingredient getRepairIngredient() {
-					<#if data.repairItems?has_content>
-					return Ingredient.of(
-						<#list data.repairItems as repairItem>
-						${mappedMCItemToItemStackCode(repairItem,1)}<#sep>,
-						</#list>
-					);
-					<#else>
-					return Ingredient.EMPTY;
-					</#if>
+				public Ingredient getRepairIngredient() {
+					return ${mappedMCItemsToIngredient(data.repairItems)};
 				}
 			},
 
@@ -82,20 +75,17 @@ public class ${name}Item extends ${data.toolType?replace("Spade", "Shovel")?repl
 			</#if>
 
 				new Item.Properties()
-			 	.tab(${data.creativeTab})
-			 	<#if data.immuneToFire>
-			 	.fireResistant()
-			 	</#if>
-		<#elseif data.toolType=="Shears" || data.toolType == "Shield">
+				<#if data.immuneToFire>
+				.fireResistant()
+				</#if>
+		<#elseif data.toolType == "Shears" || data.toolType == "Shield">
 			new Item.Properties()
-				.tab(${data.creativeTab})
 				.durability(${data.usageCount})
 				<#if data.immuneToFire>
 				.fireResistant()
 				</#if>
 		</#if>);
 	}
-
 	<#if data.toolType == "Shield" && data.repairItems?has_content>
 	@Override public boolean isValidRepairItem(ItemStack itemstack, ItemStack repairitem) {
 		return List.of(
@@ -108,12 +98,12 @@ public class ${name}Item extends ${data.toolType?replace("Spade", "Shovel")?repl
 
 	<#if data.toolType=="Shears">
 		@Override public int getEnchantmentValue() {
-    	    return ${data.enchantability};
-    	}
+			return ${data.enchantability};
+		}
 
-    	@Override public float getDestroySpeed(ItemStack stack, BlockState blockstate) {
-    		return ${data.efficiency}f;
-    	}
+		@Override public float getDestroySpeed(ItemStack stack, BlockState blockstate) {
+			return ${data.efficiency}f;
+		}
 	<#elseif data.toolType=="MultiTool">
 		@Override public boolean isCorrectToolForDrops(BlockState blockstate) {
 			int tier = ${data.harvestLevel};
@@ -154,7 +144,7 @@ public class ${name}Item extends ${data.toolType?replace("Spade", "Shovel")?repl
 
 			return super.getDefaultAttributeModifiers(equipmentSlot);
 		}
-    </#if>
+	</#if>
 
 	<#if data.toolType=="MultiTool">
 		<@onBlockDestroyedWith data.onBlockDestroyedWithTool, true/>
@@ -164,9 +154,9 @@ public class ${name}Item extends ${data.toolType?replace("Spade", "Shovel")?repl
 		<@onBlockDestroyedWith data.onBlockDestroyedWithTool/>
 
 		<@onEntityHitWith data.onEntityHitWith/>
-    </#if>
+	</#if>
 
-    <@onRightClickedInAir data.onRightClickedInAir/>
+	<@onRightClickedInAir data.onRightClickedInAir/>
 
 	<@commonMethods/>
 
@@ -174,9 +164,8 @@ public class ${name}Item extends ${data.toolType?replace("Spade", "Shovel")?repl
 <#elseif data.toolType=="Special">
 public class ${name}Item extends Item {
 
-    public ${name}Item() {
-	    super(new Item.Properties()
-		    .tab(${data.creativeTab})
+	public ${name}Item() {
+		super(new Item.Properties()
 			.durability(${data.usageCount})
 			<#if data.immuneToFire>
 			.fireResistant()
@@ -185,7 +174,7 @@ public class ${name}Item extends Item {
 	}
 
 	@Override public float getDestroySpeed(ItemStack itemstack, BlockState blockstate) {
-    	return List.of(
+		return List.of(
 			<#list data.blocksAffected as restrictionBlock>
 			${mappedBlockToBlock(restrictionBlock)}<#sep>,
 			</#list>
@@ -211,17 +200,16 @@ public class ${name}Item extends Item {
 			return builder.build();
 		}
 
-   	   return super.getDefaultAttributeModifiers(equipmentSlot);
-   	}
+		return super.getDefaultAttributeModifiers(equipmentSlot);
+	}
 
-    <@commonMethods/>
+	<@commonMethods/>
 }
 <#elseif data.toolType=="Fishing rod">
 public class ${name}Item extends FishingRodItem {
 
 	public ${name}Item() {
 		super(new Item.Properties()
-			.tab(${data.creativeTab})
 			.durability(${data.usageCount})
 			<#if data.immuneToFire>
 			.fireResistant()
@@ -246,101 +234,71 @@ public class ${name}Item extends FishingRodItem {
 	<@onBlockDestroyedWith data.onBlockDestroyedWithTool/>
 
 	<@onEntityHitWith data.onEntityHitWith/>
-    
+
+	<#if hasProcedure(data.onRightClickedInAir)>
 	@Override public InteractionResultHolder<ItemStack> use(Level world, Player entity, InteractionHand hand) {
+		super.use(world, entity, hand);
 		ItemStack itemstack = entity.getItemInHand(hand);
-		if (entity.fishing != null) {
-			if (!world.isClientSide()) {
-				itemstack.hurtAndBreak(entity.fishing.retrieve(itemstack), entity, i -> i.broadcastBreakEvent(hand));
-			}
-			world.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.FISHING_BOBBER_RETRIEVE, SoundSource.NEUTRAL, 1, 0.4f / (world.getRandom().nextFloat() * 0.4f + 0.8f));
-			world.gameEvent(entity, GameEvent.FISHING_ROD_REEL_IN, entity);
-		} else {
-			world.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.FISHING_BOBBER_THROW, SoundSource.NEUTRAL, 0.5f, 0.4f / (world.getRandom().nextFloat() * 0.4f + 0.8f));
-			if (!world.isClientSide()) {
-				int k = EnchantmentHelper.getFishingSpeedBonus(itemstack);
-				int j = EnchantmentHelper.getFishingLuckBonus(itemstack);
-				world.addFreshEntity(new FishingHook(entity, world, j, k) {
-
-					@Override public boolean shouldStopFishing(Player player) {
-						if (!player.isRemoved() && player.isAlive() &&
-								(player.getMainHandItem().is(${JavaModName}Items.${data.getModElement().getRegistryNameUpper()}.get()) ||
-								player.getOffhandItem().is(${JavaModName}Items.${data.getModElement().getRegistryNameUpper()}.get()))
-								&& !(this.distanceToSqr(player) > 1024)) {
-							return false;
-						} else {
-							this.discard();
-							return true;
-						}
-					}
-
-				});
-			}
-
-			entity.awardStat(Stats.ITEM_USED.get(this));
-			world.gameEvent(entity, GameEvent.FISHING_ROD_CAST, entity);
-		}
-		
-		<#if hasProcedure(data.onRightClickedInAir)>
-			<@procedureCode data.onRightClickedInAir, {
-				"x": "entity.getX()",
-				"y": "entity.getY()",
-				"z": "entity.getZ()",
-				"world": "world",
-				"entity": "entity",
-				"itemstack": "itemstack"
-			}/>
-		</#if>
+		<@procedureCode data.onRightClickedInAir, {
+			"x": "entity.getX()",
+			"y": "entity.getY()",
+			"z": "entity.getZ()",
+			"world": "world",
+			"entity": "entity",
+			"itemstack": "itemstack"
+		}/>
 
 		return InteractionResultHolder.sidedSuccess(itemstack, world.isClientSide());
 	}
+	</#if>
 
-    <@commonMethods/>
+	<@commonMethods/>
 }
 </#if>
+</#compress>
 
 <#macro commonMethods>
 	<#if data.stayInGridWhenCrafting>
-        @Override public boolean hasContainerItem(ItemStack stack) {
-        	return true;
-        }
+		@Override public boolean hasCraftingRemainingItem(ItemStack stack) {
+			return true;
+		}
 
-        <#if data.damageOnCrafting && data.usageCount != 0>
-        	@Override public ItemStack getContainerItem(ItemStack itemstack) {
-        		ItemStack retval = new ItemStack(this);
-        		retval.setDamageValue(itemstack.getDamageValue() + 1);
-        		if(retval.getDamageValue() >= retval.getMaxDamage()) {
-        			return ItemStack.EMPTY;
-        		}
-        		return retval;
-        	}
+		<#if data.damageOnCrafting && data.usageCount != 0>
+			@Override public ItemStack getCraftingRemainingItem(ItemStack itemstack) {
+				ItemStack retval = new ItemStack(this);
+				retval.setDamageValue(itemstack.getDamageValue() + 1);
+				if(retval.getDamageValue() >= retval.getMaxDamage()) {
+					return ItemStack.EMPTY;
+				}
+				return retval;
+			}
 
-        	@Override public boolean isRepairable(ItemStack itemstack) {
-        		return false;
-        	}
-        <#else>
-        	@Override public ItemStack getContainerItem(ItemStack itemstack) {
-        		return new ItemStack(this);
-        	}
+			@Override public boolean isRepairable(ItemStack itemstack) {
+				return false;
+			}
+		<#else>
+			@Override public ItemStack getCraftingRemainingItem(ItemStack itemstack) {
+				return new ItemStack(this);
+			}
 
-        	<#if data.usageCount != 0>
-        	    @Override public boolean isRepairable(ItemStack itemstack) {
-        		    return false;
-        	    }
-        	</#if>
-        </#if>
-    </#if>
+			<#if data.usageCount != 0>
+				@Override public boolean isRepairable(ItemStack itemstack) {
+					return false;
+				}
+			</#if>
+		</#if>
+	</#if>
 
-    <#if data.specialInfo?has_content>
-    	@Override public void appendHoverText(ItemStack itemstack, Level world, List<Component> list, TooltipFlag flag) {
-    		super.appendHoverText(itemstack, world, list, flag);
-    		<#list data.specialInfo as entry>
-    		list.add(new TextComponent("${JavaConventions.escapeStringForJava(entry)}"));
-    		</#list>
-    	}
-    </#if>
+	<#if data.specialInfo?has_content>
+		@Override public void appendHoverText(ItemStack itemstack, Level world, List<Component> list, TooltipFlag flag) {
+			super.appendHoverText(itemstack, world, list, flag);
+			<#list data.specialInfo as entry>
+			list.add(Component.literal("${JavaConventions.escapeStringForJava(entry)}"));
+			</#list>
+		}
+	</#if>
 
-    <@onItemUsedOnBlock data.onRightClickedOnBlock/>
+	<@onItemUsedOnBlock data.onRightClickedOnBlock/>
 
 	<@onCrafted data.onCrafted/>
 
@@ -350,8 +308,8 @@ public class ${name}Item extends FishingRodItem {
 
 	<@onItemTick data.onItemInUseTick, data.onItemInInventoryTick/>
 
-    <#if data.hasGlow>
+	<#if data.hasGlow>
 	<@hasGlow data.glowCondition/>
-    </#if>
+	</#if>
 </#macro>
 <#-- @formatter:on -->
