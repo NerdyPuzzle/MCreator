@@ -261,7 +261,17 @@ import java.util.*;
 		}
 		return false;
 	}
-	
+	public boolean hasItemsWithCustomProperties() {
+		for (ModElement element : workspace.getModElements()) {
+			if (element.getType() == ModElementType.ITEM) {
+				if (element.getGeneratableElement() instanceof Item item) {
+					if (!item.customProperties.isEmpty())
+						return true;
+				}
+			}
+		}
+		return false;
+	}
 	public boolean hasBiomesInVanillaDimensions() {
 		for (ModElement element : workspace.getModElements()) {
 			if (element.getType() == ModElementType.BIOME) {
