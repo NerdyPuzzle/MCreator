@@ -14,6 +14,16 @@
     "particle": "${modid}:item/${data.texture}"
 </#if>
   }
+    <#if data.getModElement().getTypeString() == "tool" && data.toolType == "Shield">,
+    "overrides": [
+        {
+            "predicate": {
+                "blocking": 1
+            },
+            "model": "${modid}:item/${registryname}_blocking"
+        }
+    ]
+    </#if>
 <#if data.getModels?? && data.getModels()?has_content>,
     "overrides": [
         <#list data.getModels() as model>
