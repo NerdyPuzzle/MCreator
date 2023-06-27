@@ -30,7 +30,6 @@ import net.mcreator.element.types.interfaces.IItemWithTexture;
 import net.mcreator.element.types.interfaces.ITabContainedElement;
 import net.mcreator.generator.GeneratorWrapper;
 import net.mcreator.generator.mapping.MappableElement;
-import net.mcreator.minecraft.MCItem;
 import net.mcreator.workspace.Workspace;
 import net.mcreator.workspace.elements.ModElement;
 import net.mcreator.workspace.elements.VariableType;
@@ -252,16 +251,6 @@ import java.util.*;
 		return false;
 	}
 
-	public boolean hasShields() {
-		for (ModElement element : workspace.getModElements()) {
-			if (element.getType() == ModElementType.TOOL) {
-				if (element.getGeneratableElement() instanceof Tool tool)
-					if (tool.toolType.equals("Shield"))
-						return true;
-			}
-		}
-		return false;
-	}
 	public boolean hasItemsWithCustomProperties() {
 		for (ModElement element : workspace.getModElements()) {
 			if (element.getType() == ModElementType.ITEM) {
@@ -273,6 +262,18 @@ import java.util.*;
 		}
 		return false;
 	}
+
+	public boolean hasShields() {
+		for (ModElement element : workspace.getModElements()) {
+			if (element.getType() == ModElementType.TOOL) {
+				if (element.getGeneratableElement() instanceof Tool tool)
+					if (tool.toolType.equals("Shield"))
+						return true;
+			}
+		}
+		return false;
+	}
+
 	public boolean hasBiomesInVanillaDimensions() {
 		for (ModElement element : workspace.getModElements()) {
 			if (element.getType() == ModElementType.BIOME) {
@@ -312,17 +313,15 @@ import java.util.*;
 		for (GeneratableElement element : elementsList) {
 			if (element instanceof ITabContainedElement tabElement) {
 				TabEntry tabEntry = tabElement.getCreativeTab();
-				List<MCItem> tabItems = tabElement.getCreativeTabItems();
-
-				if (tabEntry != null && tabItems != null && !tabItems.isEmpty()) {
+				if (tabEntry != null) {
 					String tab = tabEntry.getUnmappedValue();
 					if (tab != null && !tab.equals("No creative tab entry")) {
 						if (!tabMap.containsKey(tab)) {
 							tabMap.put(tab, new ArrayList<>());
 						}
 
-						tabMap.get(tab)
-								.addAll(tabItems.stream().map(e -> new MItemBlock(workspace, e.getName())).toList());
+						tabMap.get(tab).addAll(tabElement.getCreativeTabItems().stream()
+								.map(e -> new MItemBlock(workspace, e.getName())).toList());
 					}
 				}
 			}
