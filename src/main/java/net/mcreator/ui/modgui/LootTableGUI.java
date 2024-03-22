@@ -50,6 +50,8 @@ public class LootTableGUI extends ModElementGUI<LootTable> {
 			new String[] { "Block", "Entity", "Generic", "Chest", "Fishing", "Empty", "Advancement reward", "Gift",
 					"Barter" });
 
+	private final JCheckBox lootModifier = L10N.checkbox("elementgui.common.enable");
+
 	private JLootTablePoolsList lootTablePools;
 
 	public LootTableGUI(MCreator mcreator, ModElement modElement, boolean editingMode) {
@@ -150,6 +152,8 @@ public class LootTableGUI extends ModElementGUI<LootTable> {
 		namespace.setSelectedItem(loottable.namespace);
 		name.getEditor().setItem(loottable.name);
 
+		lootModifier.setSelected(loottable.lootModifier);
+
 		lootTablePools.setEntries(loottable.pools);
 	}
 
@@ -160,6 +164,8 @@ public class LootTableGUI extends ModElementGUI<LootTable> {
 
 		loottable.namespace = (String) namespace.getSelectedItem();
 		loottable.name = name.getEditor().getItem().toString();
+
+		loottable.lootModifier = lootModifier.isSelected();
 
 		loottable.pools = lootTablePools.getEntries();
 

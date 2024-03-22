@@ -31,6 +31,8 @@ import java.util.List;
 
 	@Nonnull public String type;
 
+	public boolean lootModifier;
+
 	@ModElementReference public List<Pool> pools;
 
 	public LootTable(ModElement element) {
