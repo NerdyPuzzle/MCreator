@@ -18,12 +18,9 @@
 
 package net.mcreator.blockly;
 
-import net.mcreator.blockly.data.Dependency;
-import net.mcreator.blockly.data.DependencyProviderInput;
-import net.mcreator.blockly.data.StatementInput;
+import net.mcreator.blockly.data.*;
 import net.mcreator.blockly.java.ProcedureCodeOptimizer;
 import net.mcreator.generator.IGeneratorProvider;
-import net.mcreator.generator.blockly.ProceduralBlockCodeGenerator;
 import net.mcreator.generator.template.TemplateGenerator;
 import net.mcreator.generator.template.TemplateGeneratorException;
 import net.mcreator.ui.blockly.BlocklyEditorType;
@@ -54,6 +51,8 @@ public abstract class BlocklyToCode implements IGeneratorProvider {
 
 	protected final BlocklyEditorType editorType;
 
+	protected final Map<String, ToolboxBlock> block_definitions;
+
 	protected String lastProceduralBlockType = null;
 
 	private final Stack<DependencyProviderInput> dependencyProviderInputStack = new Stack<>();
@@ -77,6 +76,7 @@ public abstract class BlocklyToCode implements IGeneratorProvider {
 		this.templateGenerator = templateGenerator;
 		this.workspace = workspace;
 		this.parent = parent;
+		this.block_definitions = BlocklyLoader.INSTANCE.getBlockLoader(editorType).getDefinedBlocks();
 
 		code = new StringBuilder();
 		compileNotes = new ArrayList<>();
@@ -188,7 +188,8 @@ public abstract class BlocklyToCode implements IGeneratorProvider {
 	}
 
 	public final void processBlockProcedure(List<Element> blocks) throws TemplateGeneratorException {
-		for (Element block : blocks) {
+		for (int i = 0; i < blocks.size(); i++) {
+			Element block = blocks.get(i);
 			String type = block.getAttribute("type");
 
 			if (block.getAttribute("disabled").equals("true")) { // Skip disabled blocks
@@ -202,11 +203,37 @@ public abstract class BlocklyToCode implements IGeneratorProvider {
 						try {
 							// if the current procedural block is not of type ProceduralBlockCodeGenerator, append tail,
 							// because the following block cannot be part of the current head/tail sections
+							boolean generateEarly = false;
 							if (!(generator instanceof IBlockGeneratorWithSections)) {
 								append(getTailSection());
 								clearSections();
+							} else {
+								// Check if the next block has a statement that disables local variables
+								if (i + 1 < blocks.size()) {
+									Element nextBlock = blocks.get(i + 1);
+									String nextBlockType = nextBlock.getAttribute("type");
+
+									// Get all statements in the next block
+									ToolboxBlock nextToolboxBlock = block_definitions.get(nextBlockType);
+									List<StatementInput> statementInputs = nextToolboxBlock.getStatements();
+
+									//
+									if (statementInputs != null) {
+										for (StatementInput statementInput : statementInputs) {
+											if (statementInput.disable_local_variables) {
+												generator.generateBlock(this, block);
+												append(getTailSection());
+												clearSections();
+												generateEarly = true;
+												System.out.println("appended before statement");
+												break;
+											}
+										}
+									}
+								}
 							}
-							generator.generateBlock(this, block);
+							if (!generateEarly)
+								generator.generateBlock(this, block);
 						} catch (TemplateGeneratorException e) {
 							throw e;
 						} catch (Exception e) {
