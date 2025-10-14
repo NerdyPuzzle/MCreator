@@ -208,27 +208,16 @@ public abstract class BlocklyToCode implements IGeneratorProvider {
 								append(getTailSection());
 								clearSections();
 							} else {
-								// Check if the next block has a statement that disables local variables
+								// Check if the next block has a statement and append the tail early
 								if (i + 1 < blocks.size()) {
 									Element nextBlock = blocks.get(i + 1);
 									String nextBlockType = nextBlock.getAttribute("type");
 
-									// Get all statements in the next block
-									ToolboxBlock nextToolboxBlock = block_definitions.get(nextBlockType);
-									List<StatementInput> statementInputs = nextToolboxBlock.getStatements();
-
-									//
-									if (statementInputs != null) {
-										for (StatementInput statementInput : statementInputs) {
-											if (statementInput.disable_local_variables) {
-												generator.generateBlock(this, block);
-												append(getTailSection());
-												clearSections();
-												generateEarly = true;
-												System.out.println("appended before statement");
-												break;
-											}
-										}
+									if (block_definitions.get(nextBlockType).getStatements() != null) {
+										generator.generateBlock(this, block);
+										append(getTailSection());
+										clearSections();
+										generateEarly = true;
 									}
 								}
 							}
